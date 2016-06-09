@@ -228,7 +228,7 @@ bool Service::ResolveMacro(const String& macro, const CheckResult::Ptr& cr, Valu
 			*result = cr->GetOutput();
 			return true;
 		} else if (macro == "perfdata") {
-			*result = PluginUtility::FormatPerfdata(cr->GetPerformanceData());
+			*result = PluginUtility::FormatPerfdata(cr->GetPerformanceDataParsed(const_cast<Service *>(this)));
 			return true;
 		} else if (macro == "last_check") {
 			*result = Convert::ToString((long)cr->GetExecutionEnd());

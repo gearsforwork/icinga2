@@ -673,12 +673,12 @@ String CompatUtility::GetCheckResultLongOutput(const CheckResult::Ptr& cr)
 	return Empty;
 }
 
-String CompatUtility::GetCheckResultPerfdata(const CheckResult::Ptr& cr)
+String CompatUtility::GetCheckResultPerfdata(const Checkable::Ptr& checkable, const CheckResult::Ptr& cr)
 {
 	if (!cr)
 		return String();
 
-	return PluginUtility::FormatPerfdata(cr->GetPerformanceData());
+	return PluginUtility::FormatPerfdata(cr->GetPerformanceDataParsed(checkable));
 }
 
 String CompatUtility::EscapeString(const String& str)

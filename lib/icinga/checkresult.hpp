@@ -26,6 +26,8 @@
 namespace icinga
 {
 
+class Checkable;
+
 /**
  * A check result.
  *
@@ -38,6 +40,8 @@ public:
 
 	double CalculateExecutionTime(void) const;
 	double CalculateLatency(void) const;
+
+	Array::Ptr GetPerformanceDataParsed(const intrusive_ptr<Checkable>& checkable) const;
 
 	static void StaticInitialize(void);
 };

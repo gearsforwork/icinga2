@@ -145,7 +145,7 @@ void GraphiteWriter::CheckResultHandler(const Checkable::Ptr& checkable, const C
 			SendMetric(prefix_metadata, "execution_time", cr->CalculateExecutionTime(), ts);
 		}
 
-		SendPerfdata(prefix_perfdata, cr, ts);
+		SendPerfdata(prefix_perfdata, checkable, cr, ts);
 	} else {
 		if (service) {
 			prefix = MacroProcessor::ResolveMacros(GetServiceNameTemplate(), resolvers, cr, NULL, boost::bind(&GraphiteWriter::EscapeMacroMetric, _1, true));
@@ -162,13 +162,13 @@ void GraphiteWriter::CheckResultHandler(const Checkable::Ptr& checkable, const C
 		SendMetric(prefix, "downtime_depth", checkable->GetDowntimeDepth(), ts);
 		SendMetric(prefix, "latency", cr->CalculateLatency(), ts);
 		SendMetric(prefix, "execution_time", cr->CalculateExecutionTime(), ts);
-		SendPerfdata(prefix, cr, ts);
+		SendPerfdata(prefix, checkable, cr, ts);
 	}
 }
 
-void GraphiteWriter::SendPerfdata(const String& prefix, const CheckResult::Ptr& cr, double ts)
+void GraphiteWriter::SendPerfdata(const String& prefix, const Checkable::Ptr& checkable, const CheckResult::Ptr& cr, double ts)
 {
-	Array::Ptr perfdata = cr->GetPerformanceData();
+	Array::Ptr perfdata = cr->GetPerformanceDataParsed(checkable);
 
 	if (!perfdata)
 		return;
@@ -180,13 +180,9 @@ void GraphiteWriter::SendPerfdata(const String& prefix, const CheckResult::Ptr& 
 		if (val.IsObjectType<PerfdataValue>())
 			pdv = val;
 		else {
-			try {
-				pdv = PerfdataValue::Parse(val);
-			} catch (const std::exception&) {
-				Log(LogWarning, "GraphiteWriter")
-				    << "Ignoring invalid perfdata value: " << val;
-				continue;
-			}
+			Log(LogWarning, "GraphiteWriter")
+			    << "Ignoring invalid perfdata value: " << val;
+			continue;
 		}
 
 		/* new mode below. old mode in else tree with 2.4, deprecate it in 2.6 */

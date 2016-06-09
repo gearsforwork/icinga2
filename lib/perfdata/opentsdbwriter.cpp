@@ -130,7 +130,7 @@ void OpenTsdbWriter::CheckResultHandler(const Checkable::Ptr& checkable, const C
 	SendMetric(metric + ".reachable", tags, checkable->IsReachable(), ts);
 	SendMetric(metric + ".downtime_depth", tags, checkable->GetDowntimeDepth(), ts);
 
-	SendPerfdata(metric, tags, cr, ts);
+	SendPerfdata(metric, tags, checkable, cr, ts);
 
 	metric = "icinga.check";
 
@@ -149,9 +149,9 @@ void OpenTsdbWriter::CheckResultHandler(const Checkable::Ptr& checkable, const C
 	SendMetric(metric + ".execution_time", tags, cr->CalculateExecutionTime(), ts);
 }
 
-void OpenTsdbWriter::SendPerfdata(const String& metric, const std::map<String, String>& tags, const CheckResult::Ptr& cr, double ts)
+void OpenTsdbWriter::SendPerfdata(const String& metric, const std::map<String, String>& tags, const Checkable::Ptr& checkable, const CheckResult::Ptr& cr, double ts)
 {
-	Array::Ptr perfdata = cr->GetPerformanceData();
+	Array::Ptr perfdata = cr->GetPerformanceDataParsed(checkable);
 
 	if (!perfdata)
 		return;

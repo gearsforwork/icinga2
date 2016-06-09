@@ -26,6 +26,7 @@ namespace icinga
 
 class CheckCommand : Command
 {
+	[config] Function::Ptr perfdata_handler;
 };
 
 }

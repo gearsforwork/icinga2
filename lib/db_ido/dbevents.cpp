@@ -1405,7 +1405,7 @@ void DbEvents::AddCheckableCheckHistory(const Checkable::Ptr& checkable, const C
 	fields1->Set("return_code", cr->GetExitStatus());
 	fields1->Set("output", CompatUtility::GetCheckResultOutput(cr));
 	fields1->Set("long_output", CompatUtility::GetCheckResultLongOutput(cr));
-	fields1->Set("perfdata", CompatUtility::GetCheckResultPerfdata(cr));
+	fields1->Set("perfdata", CompatUtility::GetCheckResultPerfdata(checkable, cr));
 
 	fields1->Set("instance_id", 0); /* DbConnection class fills in real ID */
 

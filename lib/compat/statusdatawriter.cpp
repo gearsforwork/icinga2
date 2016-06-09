@@ -360,7 +360,7 @@ void StatusDataWriter::DumpCheckableStatusAttrs(std::ostream& fp, const Checkabl
 	fp << "\t" "state_type=" << checkable->GetStateType() << "\n"
 	      "\t" "plugin_output=" << CompatUtility::GetCheckResultOutput(cr) << "\n"
 	      "\t" "long_plugin_output=" << CompatUtility::GetCheckResultLongOutput(cr) << "\n"
-	      "\t" "performance_data=" << CompatUtility::GetCheckResultPerfdata(cr) << "\n";
+	      "\t" "performance_data=" << CompatUtility::GetCheckResultPerfdata(checkable, cr) << "\n";
 
 	if (cr) {
 	   fp << "\t" << "check_source=" << cr->GetCheckSource() << "\n"

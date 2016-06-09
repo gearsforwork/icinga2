@@ -109,7 +109,7 @@ public:
 	/* check result */
 	static String GetCheckResultOutput(const CheckResult::Ptr& cr);
 	static String GetCheckResultLongOutput(const CheckResult::Ptr& cr);
-	static String GetCheckResultPerfdata(const CheckResult::Ptr& cr);
+	static String GetCheckResultPerfdata(const Checkable::Ptr& checkable, const CheckResult::Ptr& cr);
 
 	/* misc */
 	static std::pair<unsigned long, unsigned long> ConvertTimestamp(double time);

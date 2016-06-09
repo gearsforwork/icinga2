@@ -121,7 +121,7 @@ void GelfWriter::CheckResultHandler(const Checkable::Ptr& checkable, const Check
 	}
 
 	if (GetEnableSendPerfdata()) {
-		Array::Ptr perfdata = cr->GetPerformanceData();
+		Array::Ptr perfdata = cr->GetPerformanceDataParsed(checkable);
 
 		if (perfdata) {
 			ObjectLock olock(perfdata);
@@ -131,31 +131,28 @@ void GelfWriter::CheckResultHandler(const Checkable::Ptr& checkable, const Check
 				if (val.IsObjectType<PerfdataValue>())
 					pdv = val;
 				else {
-					try {
-						pdv = PerfdataValue::Parse(val);
-
-						String escaped_key = pdv->GetLabel();
-						boost::replace_all(escaped_key, " ", "_");
-						boost::replace_all(escaped_key, ".", "_");
-						boost::replace_all(escaped_key, "\\", "_");
-						boost::algorithm::replace_all(escaped_key, "::", ".");
-
-						fields->Set("_" + escaped_key, pdv->GetValue());
-
-						if (pdv->GetMin())
-							fields->Set("_" + escaped_key + "_min", pdv->GetMin());
-						if (pdv->GetMax())
-							fields->Set("_" + escaped_key + "_max", pdv->GetMax());
-						if (pdv->GetWarn())
-							fields->Set("_" + escaped_key + "_warn", pdv->GetWarn());
-						if (pdv->GetCrit())
-							fields->Set("_" + escaped_key + "_crit", pdv->GetCrit());
-					} catch (const std::exception&) {
-						Log(LogWarning, "GelfWriter")
-						    << "Ignoring invalid perfdata value: '" << val << "' for object '"
-						    << checkable-GetName() << "'.";
-					}
+					Log(LogWarning, "GelfWriter")
+					    << "Ignoring invalid perfdata value: '" << val << "' for object '"
+					    << checkable-GetName() << "'.";
+					continue;
 				}
+
+				String escaped_key = pdv->GetLabel();
+				boost::replace_all(escaped_key, " ", "_");
+				boost::replace_all(escaped_key, ".", "_");
+				boost::replace_all(escaped_key, "\\", "_");
+				boost::algorithm::replace_all(escaped_key, "::", ".");
+
+				fields->Set("_" + escaped_key, pdv->GetValue());
+
+				if (pdv->GetMin())
+					fields->Set("_" + escaped_key + "_min", pdv->GetMin());
+				if (pdv->GetMax())
+					fields->Set("_" + escaped_key + "_max", pdv->GetMax());
+				if (pdv->GetWarn())
+					fields->Set("_" + escaped_key + "_warn", pdv->GetWarn());
+				if (pdv->GetCrit())
+					fields->Set("_" + escaped_key + "_crit", pdv->GetCrit());
 			}
 		}
 	}

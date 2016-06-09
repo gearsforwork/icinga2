@@ -120,7 +120,7 @@ Dictionary::Ptr HostDbObject::GetStatusFields(void) const
 	if (cr) {
 		fields->Set("output", CompatUtility::GetCheckResultOutput(cr));
 		fields->Set("long_output", CompatUtility::GetCheckResultLongOutput(cr));
-		fields->Set("perfdata", CompatUtility::GetCheckResultPerfdata(cr));
+		fields->Set("perfdata", CompatUtility::GetCheckResultPerfdata(host, cr));
 		fields->Set("check_source", cr->GetCheckSource());
 	}
 

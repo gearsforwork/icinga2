@@ -298,7 +298,7 @@ bool Host::ResolveMacro(const String& macro, const CheckResult::Ptr&, Value *res
 			*result = cr->GetOutput();
 			return true;
 		} else if (macro == "perfdata") {
-			*result = PluginUtility::FormatPerfdata(cr->GetPerformanceData());
+			*result = PluginUtility::FormatPerfdata(cr->GetPerformanceDataParsed(const_cast<Host *>(this)));
 			return true;
 		} else if (macro == "last_check") {
 			*result = Convert::ToString((long)cr->GetScheduleStart());

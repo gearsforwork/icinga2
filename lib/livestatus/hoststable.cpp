@@ -416,7 +416,7 @@ Value HostsTable::PerfDataAccessor(const Value& row)
 	CheckResult::Ptr cr = host->GetLastCheckResult();
 
 	if (cr)
-		perfdata = CompatUtility::GetCheckResultPerfdata(cr);
+		perfdata = CompatUtility::GetCheckResultPerfdata(host, cr);
 
 	return perfdata;
 }

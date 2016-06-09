@@ -19,7 +19,10 @@
 
 #include "icinga/checkresult.hpp"
 #include "icinga/checkresult.tcpp"
+#include "icinga/checkcommand.hpp"
+#include "icinga/perfdatavalue.hpp"
 #include "base/scriptglobal.hpp"
+#include "base/scriptframe.hpp"
 
 using namespace icinga;
 
@@ -50,4 +53,42 @@ double CheckResult::CalculateLatency(void) const
 		latency = 0;
 
 	return latency;
+}
+
+Array::Ptr CheckResult::GetPerformanceDataParsed(const Checkable::Ptr& checkable) const
+{
+	Array::Ptr result = new Array();
+
+	Array::Ptr perfdata = GetPerformanceData();
+
+	if (!perfdata)
+		return result;
+
+	Function::Ptr handler = checkable->GetCheckCommand()->GetPerfdataHandler();
+
+	ObjectLock olock(perfdata);
+	BOOST_FOREACH(const Value& val, perfdata) {
+		PerfdataValue::Ptr pdv;
+
+		if (val.IsObjectType<PerfdataValue>())
+			pdv = val;
+		else {
+			try {
+				pdv = PerfdataValue::Parse(val);
+			} catch (const std::exception&) {
+				result->Add(val);
+				continue;
+			}
+		}
+	}
+
+	if (handler) {
+		ScriptFrame frame;
+		std::vector<Value> args;
+		args.push_back(checkable);
+		args.push_back(result);
+		handler->Invoke(args);
+	}
+
+	return result;
 }

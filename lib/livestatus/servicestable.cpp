@@ -344,7 +344,7 @@ Value ServicesTable::PerfDataAccessor(const Value& row)
 	CheckResult::Ptr cr = service->GetLastCheckResult();
 
 	if (cr)
-		perfdata = CompatUtility::GetCheckResultPerfdata(cr);
+		perfdata = CompatUtility::GetCheckResultPerfdata(service, cr);
 
 	return perfdata;
 }
